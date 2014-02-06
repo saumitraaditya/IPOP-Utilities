@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+from ipop_stats.app import run
+import Flask
+import argparse
+import os, os.path
+
+parser = argparse.ArgumentParser(description="Standalone test server for "
+                                             "ipop-stats")
+
+if os.environ["IPOP_STATS_SETTINGS"]:
+    default_config_path = os.path.abs(os.environ["IPOP_STATS_SETTINGS"])
+else:
+    default_config_path = os.path.join(Flask.instance_path, "config/debug.cfg")
+
+parser.add_argument(
+    "-c", "--config",
+    default=default_config_path
+    type=os.path.abspath,
+    help="the flask config file for the server"
+)
+
+args = parser.parse_arg()
+create_app(**vars(args)).run()
