@@ -19,16 +19,40 @@ opt-in only, and the only information we collect is:
 We'll never publish full database dumps, but we will publish general statistical
 information from our database.
 
+API Documentation
+-----------------
+
+The API still needs to be finalized and documented. For now, read the source to
+see how the API works.
+
+We follow the [JSend specification] for successes and failures.
+
+[JSend specification]: http://labs.omniti.com/labs/jsend
+
 Testing
 -------
 
-```python
-sudo aptitude install python3-pip
+```sh
+sudo aptitude install python-pip
 sudo pip3 install virtualenv
-virtualenv -p python3 .env
+virtualenv -p python .env
 .env/bin/pip install -e .
 .env/bin/ipop-stats
 ```
+
+*You should be able to play with the API via `curl`.*
+
+Coding Style
+------------
+
+We follow [PEP 8] with a few exceptions:
+
+-   Lines are 80 characters long (not 79). This includes docstrings and
+    comments.
+-   Explicit line continuation is often preferred over implicit, when it saves
+    us from deeply nesting parenthesis
+
+[PEP 8]: http://www.python.org/dev/peps/pep-0008/
 
 Abuse
 -----
@@ -42,7 +66,9 @@ Generally, we assume nobody will spam us with API calls, as there's no
 motivation for an attacker to do so.
 
 Upon setting up a production system, we should use some sort of rate-limiting,
-to avoid being DoSed. [Nginx has a rate limiting module][nginx limit req].
+to avoid being DoSed. The configuration file allows limiting based on UUID,
+IPv4, and IPv6 addresses. This can be paired with [nginx's rate limiting
+module][nginx limit req].
 
 *Please don't be evil!*
 

@@ -1,46 +1,52 @@
-from flask import current_app
 from sqlalchemy import create_engine, Column, String, Integer, DateTime
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 import uuid
 import functools
+from contextlib import contextmanager
 
-engine_url = current_app.config["DATABASE"]
-engine = create_engine(engine_url)
-Session = sessionmaker(bind=engine)
+class Database(object):
+    def __init__(self, app):
+        self.app = app
+        self.engine = create_engine(self.app.config["database"])
+        self.Session = sessionmaker(bind=self.engine)
 
-# Mappings
-Base = declarative_base()
+        # Mappings
+        self.Base = declarative_base(bind=self.engine)
 
-class User(Base):
-    __tablename__ = "users"
-    uuid = Column(String(32), primary_key=True) # hex representation
-    ipv4 = Column(Integer, index=True)
-    # ipv6 addr strings are <= 45 bytes http://stackoverflow.com/q/166132/130598
-    ipv6 = Column(String(45), index=True)
-    pings = relationship("Ping", backref="user")
+        class User(self.Base):
+            __tablename__ = "users"
+            uuid = Column(String(32), primary_key=True) # hex representation
+            ipv4 = Column(Integer, index=True)
+            # ipv6 addr strings are <= 45 bytes
+            # http://stackoverflow.com/q/166132/130598
+            ipv6 = Column(String(45), index=True)
+            pings = relationship("Ping", backref="user")
+            last_ping = relationship("Ping")
+        self.User = User
 
-class Ping(Base):
-    __tablename__ = "pings"
-    time = Column(DateTime(timezone=True), index=True)
-    controller = Column(String(20))
-    version = Column(String(20))
-    connections = Column(Integer)
-    mean_connection_lifetime = Column(String(20))
+        class Ping(self.Base):
+            __tablename__ = "pings"
+            id = Column(Integer, primary_key=True)
+            time = Column(DateTime(timezone=True), index=True)
+            controller = Column(String(20))
+            version = Column(String(20))
+            connections = Column(Integer)
+            mean_connection_lifetime = Column(String(20))
+        self.Ping = Ping
 
-Base.create_all()
+        self.Base.metadata.create_all()
 
-# Helpers
+    # Helpers
 
-def with_session(f):
-    @functools.wraps(f)
-    def wrapper(*args, **kwargs):
-        s = Session()
+    @contextmanager
+    def session_scope(self):
+        s = self.Session()
+        yield s
         try:
-            result = f(s, *args, **kwargs)
             s.commit()
-            return result
         except:
             s.rollback()
             raise
-    return wrapper
+        finally:
+            s.close()
