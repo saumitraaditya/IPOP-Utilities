@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine, Column, String, Integer, DateTime
+from sqlalchemy import create_engine, Column, String, Integer, DateTime, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
+import logging
 import uuid
 import functools
 from contextlib import contextmanager
@@ -9,13 +10,14 @@ class Database(object):
     def __init__(self, app):
         self.app = app
         self.engine = create_engine(self.app.config["database"])
+        logging.debug("create_engine:{0}".format(self.app.config["database"]))
         self.Session = sessionmaker(bind=self.engine)
 
         # Mappings
         self.Base = declarative_base(bind=self.engine)
 
         class User(self.Base):
-            __tablename__ = "users"
+            __tablename__ = "user"
             uuid = Column(String(32), primary_key=True) # hex representation
             ipv4 = Column(Integer, index=True)
             # ipv6 addr strings are <= 45 bytes
@@ -26,8 +28,9 @@ class Database(object):
         self.User = User
 
         class Ping(self.Base):
-            __tablename__ = "pings"
+            __tablename__ = "ping"
             id = Column(Integer, primary_key=True)
+            uuid = Column(String(32), ForeignKey('user.uuid')) 
             time = Column(DateTime(timezone=True), index=True)
             controller = Column(String(20))
             version = Column(String(20))

@@ -44,9 +44,16 @@ def update():
     app.logger.debug("got ping from UUID %s" % client_uuid)
     logging.debug("say something more ... ")
     with app.database.session_scope() as session:
-        last_ping = session.query(database.Ping).select_from(database.User). \
-            filter(database.User.uuid == uuid). \
-            join(database.User.last_ping).first()
+        #print session.query(app.database.Ping).all()
+        #print session.query(app.database.User).all()
+        #last_ping = session.query(app.database.Ping).select_from(app.database.User). \
+        #    filter(app.database.User.uuid == uuid). \
+        #    join(app.database.User.last_ping).first()
+        user = app.database.User(uuid=str(client_uuid), ipv4=555, ipv6="abcdefghijklmn")
+        ping = app.database.Ping(uuid=str(client_uuid))
+        #session.add(user)
+        session.add(ping)
+        session.commit()
 
 @submit.route("/generate_uuid")
 def generate_uuid():
