@@ -5,12 +5,13 @@ from sqlalchemy import func
 import datetime
 import socket
 import uuid
+import logging
 
 def validate_ip(ip):
     """Returns a compressed IP representation if the IP is valid, otherwise
     False. It's implemented using the ``socket`` module for compatibility."""
     try:
-        return socket.ntop(socket.AF_INET, socket.pton(socket.AF_INET, ip))
+        return socket.inet_ntop(socket.AF_INET, socket.inet_pton(socket.AF_INET, ip))
     except socket.error:
         try:
             return socket.ntop(socket.AF_INET6,
@@ -22,9 +23,12 @@ submit = Blueprint("submit", __name__, url_prefix="/api")
 
 @submit.route("/submit", methods=["POST"])
 def update():
-    time = datetime.datetime()
+    logging.debug("Are we doing sth?")
+    time = datetime.datetime.now()
     ip = request.remote_addr              # TODO: How does this work under wsgi?
+    logging.debug("ip:{0}".format(ip))
     ip = validate_ip(ip)
+    logging.debug("SOMTHING is posted")
     if ip:
         ipv6 = ":" in request.remote_addr
         ipv4 = not ipv6
@@ -32,8 +36,13 @@ def update():
         message = "IP address '%s' failed to validate" % ip
         app.logger.error(message)
         raise ApiFail(message, _ip_addr="bad format")
-    client_uuid = uuid.UUID(hex=request.json["uuid"])
+    logging.debug("say something ... ")
+    logging.debug("request uuid:{0}".format(request.json["uuid"]))
+    #client_uuid = uuid.UUID(hex=request.json["uuid"])
+    client_uuid = uuid.UUID(request.json["uuid"])
+    logging.debug("uuid:{0}".format(client_uuid))
     app.logger.debug("got ping from UUID %s" % client_uuid)
+    logging.debug("say something more ... ")
     with app.database.session_scope() as session:
         last_ping = session.query(database.Ping).select_from(database.User). \
             filter(database.User.uuid == uuid). \
