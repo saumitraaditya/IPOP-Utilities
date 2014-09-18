@@ -74,13 +74,13 @@ module][nginx limit req].
 
 Running server
 --------------
-'''
+```
 sudo apt-get update
 sudo apt-get install git python-pip python-flask python-sqlalchemy sqlite3
 git clone https://github.com/kyuhojeong/ipop-stats.git
 cd ipop-stats
 ./run.py
-'''
+```
 
 now you can access this server through webbrowser. 
 
@@ -93,12 +93,12 @@ http://ip_address:5000/api/submit
 sqlite database file is located /tmp/test.db
 
 Simple database query usage as below. 
-'''
+```
 $sqlite3
 sqlite>.open /tmp/test.db
 sqlite>select * from user;
 sqlite>select * from ping;
-'''
+```
 
 
 
