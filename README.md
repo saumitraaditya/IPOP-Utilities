@@ -92,7 +92,7 @@ http://ip_address:5000/api/submit
 
 sqlite database file is located /tmp/test.db
 
-Simple database query usage as below. 
+Simple database query snippets below. 
 ```
 $sqlite3
 sqlite>.open /tmp/test.db
