@@ -20,4 +20,4 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-create_app(**vars(args)).run()
+create_app(**vars(args)).run(host="0.0.0.0")
