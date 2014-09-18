@@ -1,5 +1,6 @@
 # http://flask.pocoo.org/docs/config/
 database: "sqlite:////tmp/test.db" # in-memory db
+new_database: True
 flask:
     debug: true
     testing: true

@@ -26,7 +26,6 @@ def create(config):
     # Load blueprints
     from .views.submit import submit
     app.register_blueprint(submit)
-    logging.debug("Are we doing something? 2")
 
     if False and app.debug:
         app.logger.warning("Debug mode is on. Do not use this in production.")

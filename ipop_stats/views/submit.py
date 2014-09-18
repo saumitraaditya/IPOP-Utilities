@@ -23,12 +23,9 @@ submit = Blueprint("submit", __name__, url_prefix="/api")
 
 @submit.route("/submit", methods=["POST"])
 def update():
-    logging.debug("Are we doing sth?")
     time = datetime.datetime.now()
     ip = request.remote_addr              # TODO: How does this work under wsgi?
-    logging.debug("ip:{0}".format(ip))
     ip = validate_ip(ip)
-    logging.debug("SOMTHING is posted")
     if ip:
         ipv6 = ":" in request.remote_addr
         ipv4 = not ipv6
@@ -36,24 +33,32 @@ def update():
         message = "IP address '%s' failed to validate" % ip
         app.logger.error(message)
         raise ApiFail(message, _ip_addr="bad format")
-    logging.debug("say something ... ")
-    logging.debug("request uuid:{0}".format(request.json["uuid"]))
-    #client_uuid = uuid.UUID(hex=request.json["uuid"])
-    client_uuid = uuid.UUID(request.json["uuid"])
-    logging.debug("uuid:{0}".format(client_uuid))
-    app.logger.debug("got ping from UUID %s" % client_uuid)
-    logging.debug("say something more ... ")
+    uid = request.json["uid"]
     with app.database.session_scope() as session:
-        #print session.query(app.database.Ping).all()
-        #print session.query(app.database.User).all()
-        #last_ping = session.query(app.database.Ping).select_from(app.database.User). \
-        #    filter(app.database.User.uuid == uuid). \
-        #    join(app.database.User.last_ping).first()
-        user = app.database.User(uuid=str(client_uuid), ipv4=555, ipv6="abcdefghijklmn")
-        ping = app.database.Ping(uuid=str(client_uuid))
-        #session.add(user)
+        user = session.query(app.database.User).\
+               filter(app.database.User.uid == uid).first()
+        if user == None:   
+            user = app.database.User(uid=uid, ipv4=request.json["ipv4"],\
+                                     ipv6=request.json["ipv6"])
+        elif user.ipv4 != request.json["ipv4"] and\
+             user.ipv6 != request.json["ipv6"]:
+            response = jsonify(result=uuid.uuid4().hex, status="error")
+            return response
+
+        ping = app.database.Ping(uid=uid, time=datetime.datetime.strptime(\
+            request.json["time"], "%Y-%m-%d %H:%M:%S.%f"),\
+            controller=request.json["controller"],\
+            version=request.json["version"])
+        session.add(user)
         session.add(ping)
         session.commit()
+
+    response = jsonify(result=uuid.uuid4().hex, status="success")
+    return response
+
+@submit.route("/")
+def hello():
+    return "Hello World!"
 
 @submit.route("/generate_uuid")
 def generate_uuid():

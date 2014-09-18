@@ -13,12 +13,14 @@ class Database(object):
         logging.debug("create_engine:{0}".format(self.app.config["database"]))
         self.Session = sessionmaker(bind=self.engine)
 
+
         # Mappings
         self.Base = declarative_base(bind=self.engine)
 
+
         class User(self.Base):
             __tablename__ = "user"
-            uuid = Column(String(32), primary_key=True) # hex representation
+            uid = Column(String(40), primary_key=True) # hex representation
             ipv4 = Column(Integer, index=True)
             # ipv6 addr strings are <= 45 bytes
             # http://stackoverflow.com/q/166132/130598
@@ -30,7 +32,7 @@ class Database(object):
         class Ping(self.Base):
             __tablename__ = "ping"
             id = Column(Integer, primary_key=True)
-            uuid = Column(String(32), ForeignKey('user.uuid')) 
+            uid = Column(String(40), ForeignKey('user.uid')) 
             time = Column(DateTime(timezone=True), index=True)
             controller = Column(String(20))
             version = Column(String(20))
@@ -38,6 +40,8 @@ class Database(object):
             mean_connection_lifetime = Column(String(20))
         self.Ping = Ping
 
+        if self.app.config["new_database"]:
+            self.Base.metadata.drop_all()
         self.Base.metadata.create_all()
 
     # Helpers
