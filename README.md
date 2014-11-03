@@ -29,19 +29,7 @@ We follow the [JSend specification] for successes and failures.
 
 [JSend specification]: http://labs.omniti.com/labs/jsend
 
-Testing
--------
 
-```sh
-sudo aptitude install python-pip
-sudo apt-get install python3-pip
-sudo pip3 install virtualenv
-virtualenv -p python .env
-.env/bin/pip install -e .
-.env/bin/ipop-stats
-```
-
-*You should be able to play with the API via `curl`.*
 
 Coding Style
 ------------
