@@ -34,6 +34,7 @@ Testing
 
 ```sh
 sudo aptitude install python-pip
+sudo apt-get install python3-pip
 sudo pip3 install virtualenv
 virtualenv -p python .env
 .env/bin/pip install -e .
