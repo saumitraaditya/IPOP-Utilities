@@ -51,14 +51,11 @@ def update():
         user = session.query(app.database.User).\
                filter(app.database.User.uid == uid).first()
         if user == None:   
-            user = app.database.User(uid=uid, ipv4=request.json["ipv4"],\
-                     ipv6=request.json["ipv6"],\
+            user = app.database.User(uid=uid,\
+                     #ipv4=request.json["ipv4"],\
+                     #ipv6=request.json["ipv6"],\
                      xmpp_username=request.json["xmpp_username"])
             first_user = True
-        elif user.ipv4 != request.json["ipv4"] and\
-             user.ipv6 != request.json["ipv6"]:
-            response = jsonify(result=uuid.uuid4().hex, status="error")
-            return response
         user.xmpp_host = xmpp.id 
         session.add(user)
         session.flush()
