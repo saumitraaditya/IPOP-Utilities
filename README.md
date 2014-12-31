@@ -79,7 +79,7 @@ controller reports status info
 
 http://ip_address:5000/api/submit
 
-sqlite database file is located /tmp/test.db
+sqlite database file is located /var/lib/ipop-stat/ipop-stat.db
 
 Simple database query snippets below. 
 ```
