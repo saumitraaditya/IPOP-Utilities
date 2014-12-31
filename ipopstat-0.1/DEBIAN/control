@@ -1,0 +1,9 @@
+Package: ipop-stat-0.1
+Source: linux
+Version: 0.1
+Architecture: amd64
+Maintainer: Kyuho Jeong <kyuho.jeong@gmail.com>
+Installed-Size: 41150
+Pre-Depends: dpkg (>= 1.10.24)
+Depends: python-pip, python-flask, python-sqlalchemy, sqlite3
+Description: Humble stat server
