@@ -104,9 +104,12 @@ dpkg-deb --build ipop-stat/ipopstat-0.1
 Install and Running ipopstat from Debian Package
 ------------------------------------------------
 
+```
 sudo dpkg -i ipopstat-0.1
 sudo apt-get update
 sudo apt-get -f install 
+```
+
 
 
 
