@@ -89,6 +89,28 @@ sqlite>select * from user;
 sqlite>select * from ping;
 ```
 
+Building Debian Packages
+------------------------
+
+
+Locate at the parent directory of ipop-stat then run below.
+
+```
+dpkg-deb --build ipop-stat/ipopstat-0.1
+```
+
+
+
+Install and Running ipopstat from Debian Package
+------------------------------------------------
+
+sudo dpkg -i ipopstat-0.1
+sudo apt-get update
+sudo apt-get -f install 
+
+
+
+
 
 
 [nginx limit req]: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
