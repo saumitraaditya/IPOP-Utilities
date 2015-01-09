@@ -1,2 +1,8 @@
 #!/usr/bin/env bash
 mkdir -p /var/lib/ipop-stat
+touch /var/lib/ipop-stat/ipop-stat.db
+touch /var/log/ipop-stat.log
+useradd -d /var/lib/ipop-stat ipop 
+chown --quiet ipop:ipop /var/lib/ipop-stat
+chown --quiet ipop:ipop /var/lib/ipop-stat/ipop-stat.db
+chown --quiet ipop:ipop /var/log/ipop-stat.log

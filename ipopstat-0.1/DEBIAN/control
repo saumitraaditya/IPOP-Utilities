@@ -5,5 +5,5 @@ Architecture: amd64
 Maintainer: Kyuho Jeong <kyuho.jeong@gmail.com>
 Installed-Size: 41150
 Pre-Depends: dpkg (>= 1.10.24)
-Depends: python-pip, python-flask, python-sqlalchemy, sqlite3
+Depends: python-pip, python-flask, python-sqlalchemy, sqlite3, python-yaml
 Description: Humble stat server
